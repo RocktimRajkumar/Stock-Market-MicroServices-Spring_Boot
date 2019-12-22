@@ -5,6 +5,7 @@ import com.devforce.stock.dbservice.model.Quotes;
 import com.devforce.stock.dbservice.repository.QuotesRepository;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,5 +39,14 @@ public class DbServiceResource {
                 .map(quote -> new Quote(quotes.getUserName(), quote))
                 .forEach(quote -> quotesRepository.save(quote));
         return getQuotes(quotes.getUserName());
+    }
+
+    @PostMapping("/delete/{username}")
+    @Transactional
+    public List<String> delete(@PathVariable("username") final String username){
+
+        quotesRepository.removeByUserName(username);
+
+        return getQuotesByUserName(username);
     }
 }
